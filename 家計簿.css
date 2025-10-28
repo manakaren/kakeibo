@@ -1,4 +1,4 @@
-/* === カラーテーマ変数 === */
+/* === カラーテーマ === */
 :root {
   --bg: #f6f2ea;
   --fg: #333;
@@ -19,7 +19,7 @@ body {
   line-height: 1.6;
 }
 
-/* === ヘッダー／フッター === */
+/* === ヘッダー・フッター === */
 header,
 footer {
   background: var(--paper);
@@ -37,18 +37,27 @@ footer {
   display: grid;
   gap: 16px;
   padding: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  /* 💡 画面が広い時は2列、狭い時は1列 */
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  align-items: start;
 }
 
-/* === カード === */
+/* === カード共通 === */
 .card {
   background: var(--paper);
   padding: 16px;
   border-radius: 10px;
   box-shadow: 0 2px 4px #0001;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.card h2 {
+  margin-top: 0;
+  color: var(--primary);
 }
 .card.wide {
-  grid-column: 1 / -1;
+  grid-column: 1 / -1; /* フル幅カード */
 }
 
 /* === ボタン === */
@@ -83,6 +92,7 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 8px;
+  font-size: 0.9em;
 }
 th,
 td {
@@ -127,6 +137,15 @@ thead {
   margin-bottom: 4px;
 }
 
+/* === グラフキャンバス === */
+canvas {
+  width: 100% !important;
+  max-height: 260px;
+}
+#barChart {
+  margin-top: 12px;
+}
+
 /* === 注意・結果表示 === */
 .alert {
   color: var(--bad);
@@ -135,6 +154,21 @@ thead {
 .result {
   font-weight: bold;
   margin-top: 6px;
+}
+
+/* === グラフ＆報告書セクションを均等に配置 === */
+@media (min-width: 900px) {
+  .card.wide.graph-report {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .card.wide.graph-report section {
+    background: var(--paper);
+    border-radius: 10px;
+    padding: 10px 16px;
+    box-shadow: 0 1px 2px #0001;
+  }
 }
 
 /* === ダークモード === */
@@ -149,7 +183,7 @@ thead {
   background: #444;
 }
 
-/* === 印刷時 === */
+/* === 印刷用 === */
 @media print {
   header,
   #theme-toggle,
@@ -163,5 +197,9 @@ thead {
   .card {
     box-shadow: none;
     border: 1px solid #aaa;
+  }
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
   }
 }
