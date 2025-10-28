@@ -1,21 +1,167 @@
+/* === カラーテーマ変数 === */
 :root {
-  --bg: #f6f2ea; --fg: #333; --paper: #fffaf3;
-  --line: #ccc; --primary: #7c5a3a;
-  --good: #2e8b57; --warn: #d59b1a; --bad: #c0392b;
+  --bg: #f6f2ea;
+  --fg: #333;
+  --paper: #fffaf3;
+  --line: #ccc;
+  --primary: #7c5a3a;
+  --good: #2e8b57;
+  --warn: #d59b1a;
+  --bad: #c0392b;
 }
-body { margin:0; background:var(--bg); color:var(--fg); font-family:"Noto Sans JP",sans-serif; }
-header, footer { background:var(--paper); padding:10px 20px; border-bottom:1px solid var(--line); }
-.grid { display:grid; gap:16px; padding:16px; grid-template-columns:repeat(auto-fit,minmax(380px,1fr)); }
-.card { background:var(--paper); padding:16px; border-radius:10px; box-shadow:0 2px 4px #0001; }
-.btn { padding:6px 10px; border-radius:6px; cursor:pointer; border:1px solid var(--line); }
-.btn.primary { background:var(--primary); color:white; border:none; }
-.btn.danger { background:var(--bad); color:white; border:none; }
-.btn.small { font-size:.9em; }
-.bar { height:12px; background:#eee; border-radius:10px; overflow:hidden; }
-.bar-fill { height:100%; width:0%; transition:width 0.8s ease-in-out, background-color 0.3s; background:var(--warn); }
-.bar-fill.good { background:var(--good); }
-.bar-fill.bad { background:var(--bad); }
-.alert { color:var(--bad); font-weight:bold; }
-.result { font-weight:bold; }
-.dark { --bg:#222; --fg:#eee; --paper:#333; --line:#555; }
-@media print { header,#theme-toggle,#print-all{display:none;} .card{box-shadow:none;} }
+
+/* === 全体 === */
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "Noto Sans JP", sans-serif;
+  line-height: 1.6;
+}
+
+/* === ヘッダー／フッター === */
+header,
+footer {
+  background: var(--paper);
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--line);
+}
+footer {
+  border-top: 1px solid var(--line);
+  text-align: center;
+  font-size: 0.9em;
+}
+
+/* === グリッドレイアウト === */
+.grid {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+}
+
+/* === カード === */
+.card {
+  background: var(--paper);
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px #0001;
+}
+.card.wide {
+  grid-column: 1 / -1;
+}
+
+/* === ボタン === */
+.btn {
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  transition: 0.2s;
+}
+.btn:hover {
+  opacity: 0.8;
+}
+.btn.primary {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+}
+.btn.danger {
+  background: var(--bad);
+  color: #fff;
+  border: none;
+}
+.btn.small {
+  font-size: 0.9em;
+  padding: 4px 8px;
+}
+
+/* === テーブル === */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+th,
+td {
+  border-bottom: 1px solid var(--line);
+  padding: 6px;
+  text-align: left;
+}
+thead {
+  background: #eee;
+  font-weight: bold;
+}
+
+/* === プログレスバー === */
+.bar {
+  height: 12px;
+  background: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.bar-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--warn);
+  transition: width 0.8s ease-in-out, background-color 0.3s;
+}
+.bar-fill.good {
+  background: var(--good);
+}
+.bar-fill.bad {
+  background: var(--bad);
+}
+
+/* === 進捗ラベル === */
+.progress {
+  margin-bottom: 12px;
+}
+.progress .label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9em;
+  margin-bottom: 4px;
+}
+
+/* === 注意・結果表示 === */
+.alert {
+  color: var(--bad);
+  font-weight: bold;
+}
+.result {
+  font-weight: bold;
+  margin-top: 6px;
+}
+
+/* === ダークモード === */
+.dark {
+  --bg: #222;
+  --fg: #eee;
+  --paper: #333;
+  --line: #555;
+  --primary: #b58a5e;
+}
+.dark table thead {
+  background: #444;
+}
+
+/* === 印刷時 === */
+@media print {
+  header,
+  #theme-toggle,
+  #print-all {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
+  .card {
+    box-shadow: none;
+    border: 1px solid #aaa;
+  }
+}

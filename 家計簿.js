@@ -217,14 +217,6 @@ function setBar(el,pctEl,pct){
   else el.classList.add("bad");
   pctEl.textContent=p+"%";
 }
-$("#reset-savings").addEventListener("click", () => {
-  if (!confirm("貯金データをリセットして0%に戻しますか？")) return;
-  savings = 0;
-  localStorage.setItem(LS.SAVINGS, savings);
-  renderProgress();
-  alert("💣 貯金バーをリセットしました（0%）。");
-});
-
 // === 報告書 ===
 $("#report-form").addEventListener("submit",(e)=>{
   e.preventDefault();
