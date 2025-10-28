@@ -9,7 +9,7 @@
 </head>
 <body>
   <header class="page-header">
-    <h1>💰 家計簿＋貯金進捗＋就労報告（完全版）</h1>
+    <h1>💰 家計簿＋貯金進捗＋就労報告</h1>
     <button id="theme-toggle" class="btn small">🌗 テーマ切替</button>
     <button id="print-all" class="btn small">🖨 印刷</button>
   </header>
@@ -45,7 +45,16 @@
 
       <h3 class="mt">📘 全取引履歴</h3>
       <table id="trans-table">
-        <thead><tr><th>日付</th><th>種別</th><th>カテゴリ</th><th>金額</th><th>メモ</th><th></th></tr></thead>
+        <thead>
+          <tr>
+            <th>日付</th>
+            <th>種別</th>
+            <th>カテゴリ</th>
+            <th>金額</th>
+            <th>メモ</th>
+            <th>操作</th>
+          </tr>
+        </thead>
         <tbody></tbody>
       </table>
     </section>
@@ -55,7 +64,6 @@
       <h2>🎯 貯金目標設定</h2>
       <label>1年目標（円）<input type="number" id="goal-year" value="900000"></label>
       <label>18カ月目標（円）<input type="number" id="goal-18" value="1250000"></label>
-      <button id="reset-savings" class="btn danger small">💣 貯金をすべてリセット</button>
     </section>
 
     <!-- 予算設定 -->
@@ -66,12 +74,22 @@
       <p id="balance-result" class="result"></p>
     </section>
 
-    <!-- 進捗バー -->
+    <!-- 貯金進捗バー -->
     <section class="card">
       <h2>📈 貯金進捗バー</h2>
-      <div class="progress"><div class="label">1年目標 <strong id="year-pct">0%</strong></div><div class="bar"><div id="year-bar" class="bar-fill"></div></div></div>
-      <div class="progress"><div class="label">18カ月目標 <strong id="m18-pct">0%</strong></div><div class="bar"><div id="m18-bar" class="bar-fill"></div></div></div>
-      <div class="progress"><div class="label">今月の貯金 <strong id="mon-pct">0%</strong></div><div class="bar"><div id="mon-bar" class="bar-fill"></div></div></div>
+      <div class="progress">
+        <div class="label">1年目標 <strong id="year-pct">0%</strong></div>
+        <div class="bar"><div id="year-bar" class="bar-fill"></div></div>
+      </div>
+      <div class="progress">
+        <div class="label">18カ月目標 <strong id="m18-pct">0%</strong></div>
+        <div class="bar"><div id="m18-bar" class="bar-fill"></div></div>
+      </div>
+      <div class="progress">
+        <div class="label">今月の貯金 <strong id="mon-pct">0%</strong></div>
+        <div class="bar"><div id="mon-bar" class="bar-fill"></div></div>
+      </div>
+      <button id="reset-savings" class="btn danger small">💣 貯金をリセット</button>
     </section>
 
     <!-- グラフ -->
@@ -108,7 +126,7 @@
 
   </main>
 
-  <footer class="page-footer"><small>© 完全版 家計簿＋就労報告</small></footer>
+  <footer class="page-footer"><small>© 家計簿＋貯金進捗＋就労報告（完全版）</small></footer>
 
   <script src="./家計簿.js" defer></script>
 </body>

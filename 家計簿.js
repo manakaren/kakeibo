@@ -16,7 +16,7 @@ let goal18 = +localStorage.getItem(LS.GOAL_18) || 1250000;
 let savings = +localStorage.getItem(LS.SAVINGS) || 0;
 const reports = JSON.parse(localStorage.getItem(LS.REPORTS) || "[]");
 
-// === 取引追加 ===
+// === 取引追加（収入は自動で貯金反映） ===
 $("#entry-form").addEventListener("submit", (e) => {
   e.preventDefault();
   const t = {
@@ -29,36 +29,44 @@ $("#entry-form").addEventListener("submit", (e) => {
     saved: false
   };
   if (!t.category || !t.amount) return alert("入力不足です");
+
+  // ✅ 収入は貯金へ自動反映
+  if (t.type === "income") {
+    savings += t.amount;
+    localStorage.setItem(LS.SAVINGS, savings);
+  }
+
   transactions.push(t);
   saveAll();
   renderAll();
   e.target.reset();
 });
 
-// === 削除 ===
+// === 取引削除 ===
 function delTrans(i) {
   const t = transactions[i];
-  if (t.saved) {
-    if (confirm("この取引は貯金に追加済みです。貯金からも削除しますか？")) {
+
+  // 💰 収入を削除した場合は貯金からも自動で減算
+  if (t.type === "income") {
+    if (confirm(`この取引は収入です。貯金から ${t.amount.toLocaleString()}円 を減らしますか？`)) {
       savings -= t.amount;
       if (savings < 0) savings = 0;
       localStorage.setItem(LS.SAVINGS, savings);
     }
   }
+
   transactions.splice(i, 1);
   saveAll();
-  renderAll();
+  renderAll(); // ← バー再描画
 }
 
-// === 繰り返し追加（月初） ===
-function addRepeats() {
-  const today = new Date().toISOString().slice(0, 10);
-  const ym = today.slice(0, 7);
-  const repeats = transactions.filter(t => t.repeat);
-  for (const r of repeats) {
-    const exists = transactions.some(t => t.repeat && t.date.startsWith(ym) && t.category === r.category);
-    if (!exists) transactions.push({ ...r, date: `${ym}-01` });
-  }
+
+// === カテゴリ削除（個別取引） ===
+function clearCategory(i) {
+  if (!confirm("この取引のカテゴリを削除しますか？")) return;
+  transactions[i].category = "";
+  saveAll();
+  renderTransactions();
 }
 
 // === 保存 ===
@@ -70,20 +78,24 @@ function saveAll() {
   localStorage.setItem(LS.SAVINGS, savings);
 }
 
-// === 目標・予算変更 ===
-$("#goal-year").oninput = e => { goalYear = +e.target.value; saveAll(); renderProgress(); };
-$("#goal-18").oninput = e => { goal18 = +e.target.value; saveAll(); renderProgress(); };
+// === 繰り返し（月初追加） ===
+function addRepeats() {
+  const today = new Date().toISOString().slice(0, 10);
+  const ym = today.slice(0, 7);
+  const repeats = transactions.filter(t => t.repeat);
+  for (const r of repeats) {
+    const exists = transactions.some(t => t.repeat && t.date.startsWith(ym) && t.category === r.category);
+    if (!exists) transactions.push({ ...r, date: `${ym}-01` });
+  }
+}
+
+// === 予算設定 ===
 $("#budget").value = budget;
 $("#budget").oninput = e => { budget = +e.target.value; saveAll(); renderAll(); };
 
-// === 貯金リセット ===
-$("#reset-savings").addEventListener("click", () => {
-  if (!confirm("貯金データをすべてリセットしますか？")) return;
-  savings = 0;
-  localStorage.setItem(LS.SAVINGS, savings);
-  renderProgress();
-  alert("💣 貯金データをリセットしました。");
-});
+// === 目標金額設定 ===
+$("#goal-year").oninput = e => { goalYear = +e.target.value; saveAll(); renderProgress(); };
+$("#goal-18").oninput = e => { goal18 = +e.target.value; saveAll(); renderProgress(); };
 
 // === 今日の取引一覧 ===
 function renderToday() {
@@ -94,7 +106,7 @@ function renderToday() {
   todayList.forEach(t => {
     const tr = document.createElement("tr");
     tr.innerHTML = `<td>${t.type === "income" ? "収入" : "支出"}</td>
-                    <td>${t.category}</td>
+                    <td>${t.category || "（未設定）"}</td>
                     <td>${t.amount.toLocaleString()}</td>
                     <td>${t.memo || ""}</td>`;
     tbody.appendChild(tr);
@@ -102,7 +114,7 @@ function renderToday() {
   if (todayList.length === 0) tbody.innerHTML = `<tr><td colspan="4">本日の取引はありません</td></tr>`;
 }
 
-// === 全取引テーブル ===
+// === 全取引一覧（カテゴリ削除ボタン付き） ===
 function renderTransactions() {
   const tbody = $("#trans-table tbody");
   tbody.innerHTML = "";
@@ -111,31 +123,19 @@ function renderTransactions() {
     tr.innerHTML = `
       <td>${t.date}</td>
       <td>${t.type === "income" ? "収入" : "支出"}</td>
-      <td>${t.category}</td>
+      <td>${t.category || "（未設定）"}
+        <button class="btn small danger" onclick="clearCategory(${i})">×</button>
+      </td>
       <td>${t.amount.toLocaleString()}</td>
       <td>${t.memo || ""}</td>
       <td>
         <button class="btn small" onclick="delTrans(${i})">削除</button>
-        <button class="btn small primary" onclick="addToSavings(${i})">💰貯金追加</button>
       </td>`;
     tbody.appendChild(tr);
   });
 }
 
-// === 貯金追加機能 ===
-function addToSavings(i) {
-  const t = transactions[i];
-  if (t.type === "expense") return alert("支出は貯金に追加できません！");
-  if (!confirm(`「${t.category}」の ${t.amount.toLocaleString()}円 を貯金に加えますか？`)) return;
-  if (t.saved) return alert("この取引はすでに貯金に追加済みです。");
-  t.saved = true;
-  savings += t.amount;
-  saveAll();
-  alert(`💰 ${t.amount.toLocaleString()}円 を貯金に追加しました！`);
-  renderProgress();
-}
-
-// === 予算・収支判定 ===
+// === 予算・赤字黒字 ===
 function renderBudgetAlert() {
   const month = new Date().toISOString().slice(0, 7);
   const inc = transactions.filter(t => t.type === "income" && t.date.startsWith(month))
@@ -217,6 +217,13 @@ function setBar(el,pctEl,pct){
   else el.classList.add("bad");
   pctEl.textContent=p+"%";
 }
+$("#reset-savings").addEventListener("click", () => {
+  if (!confirm("貯金データをリセットして0%に戻しますか？")) return;
+  savings = 0;
+  localStorage.setItem(LS.SAVINGS, savings);
+  renderProgress();
+  alert("💣 貯金バーをリセットしました（0%）。");
+});
 
 // === 報告書 ===
 $("#report-form").addEventListener("submit",(e)=>{
