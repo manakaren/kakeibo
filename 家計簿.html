@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>家計簿＋貯金進捗＋就労報告（完全版）</title>
+  <link rel="stylesheet" href="家計簿.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="page-header">
+    <h1>💰 家計簿＋貯金進捗＋就労報告（完全版）</h1>
+    <button id="theme-toggle" class="btn small">🌗 テーマ切替</button>
+    <button id="print-all" class="btn small">🖨 印刷</button>
+  </header>
+
+  <main class="grid">
+
+    <!-- 取引入力 -->
+    <section class="card wide">
+      <h2>🧾 取引登録</h2>
+      <form id="entry-form" class="row">
+        <input type="date" id="date" required />
+        <select id="type">
+          <option value="income">収入</option>
+          <option value="expense">支出</option>
+        </select>
+        <input type="text" id="category" placeholder="カテゴリ" required list="catlist" />
+        <datalist id="catlist">
+          <option value="給与"><option value="副収入"><option value="食費">
+          <option value="光熱費"><option value="家賃"><option value="通信費">
+          <option value="交通費"><option value="医療費"><option value="娯楽">
+        </datalist>
+        <input type="number" id="amount" min="0" placeholder="金額" required />
+        <input type="text" id="memo" placeholder="メモ" />
+        <label><input type="checkbox" id="repeat"> 毎月繰り返し</label>
+        <button class="btn primary">追加</button>
+      </form>
+
+      <h3>📅 今日の取引一覧</h3>
+      <table id="today-table">
+        <thead><tr><th>種別</th><th>カテゴリ</th><th>金額</th><th>メモ</th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <h3 class="mt">📘 全取引履歴</h3>
+      <table id="trans-table">
+        <thead><tr><th>日付</th><th>種別</th><th>カテゴリ</th><th>金額</th><th>メモ</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- 目標設定 -->
+    <section class="card">
+      <h2>🎯 貯金目標設定</h2>
+      <label>1年目標（円）<input type="number" id="goal-year" value="900000"></label>
+      <label>18カ月目標（円）<input type="number" id="goal-18" value="1250000"></label>
+      <button id="reset-savings" class="btn danger small">💣 貯金をすべてリセット</button>
+    </section>
+
+    <!-- 予算設定 -->
+    <section class="card">
+      <h2>💡 月予算設定</h2>
+      <label>今月の支出予算（円）<input type="number" id="budget" value="100000" /></label>
+      <p id="budget-alert" class="alert"></p>
+      <p id="balance-result" class="result"></p>
+    </section>
+
+    <!-- 進捗バー -->
+    <section class="card">
+      <h2>📈 貯金進捗バー</h2>
+      <div class="progress"><div class="label">1年目標 <strong id="year-pct">0%</strong></div><div class="bar"><div id="year-bar" class="bar-fill"></div></div></div>
+      <div class="progress"><div class="label">18カ月目標 <strong id="m18-pct">0%</strong></div><div class="bar"><div id="m18-bar" class="bar-fill"></div></div></div>
+      <div class="progress"><div class="label">今月の貯金 <strong id="mon-pct">0%</strong></div><div class="bar"><div id="mon-bar" class="bar-fill"></div></div></div>
+    </section>
+
+    <!-- グラフ -->
+    <section class="card wide">
+      <h2>📊 支出・収入・予算比較グラフ</h2>
+      <canvas id="pieChart"></canvas>
+      <canvas id="lineChart" class="mt"></canvas>
+      <canvas id="barChart" class="mt"></canvas>
+    </section>
+
+    <!-- 就労報告 -->
+    <section class="card wide">
+      <h2>📝 就労移行・保護者報告書</h2>
+      <form id="report-form" class="col">
+        <label>報告対象月<input type="month" id="rep-month" required /></label>
+        <label>氏名<input type="text" id="rep-name" placeholder="例：原 愛瑛" /></label>
+        <label>就活応募数<input type="number" id="rep-app" min="0" /></label>
+        <label>体調スコア（1〜10）<input type="number" id="rep-cond" min="1" max="10" /></label>
+        <label>医療・通院<textarea id="rep-med" rows="2"></textarea></label>
+        <label>体調<textarea id="rep-health" rows="2"></textarea></label>
+        <label>面談記録<textarea id="rep-meet" rows="2"></textarea></label>
+        <label>成果・課題<textarea id="rep-out" rows="2"></textarea></label>
+        <label>来月の目標<textarea id="rep-goal" rows="2"></textarea></label>
+        <label>就労移行支援コメント<textarea id="rep-staff" rows="2"></textarea></label>
+        <label>保護者確認<textarea id="rep-parent" rows="2"></textarea></label>
+        <div class="sign-area">
+          <label>就労支援員署名：<input type="text" id="sign-staff"></label>
+          <label>保護者署名：<input type="text" id="sign-parent"></label>
+        </div>
+        <button class="btn primary" type="submit">報告書保存</button>
+      </form>
+      <ul id="rep-list" class="list"></ul>
+    </section>
+
+  </main>
+
+  <footer class="page-footer"><small>© 完全版 家計簿＋就労報告</small></footer>
+
+  <script src="./家計簿.js" defer></script>
+</body>
+</html>
